@@ -153,17 +153,9 @@ const Dashboard = () => {
 		try {
 			return parseUnits(String(amount), WBTCDecimals);
 		} catch (error) {
-			// console.error(
-			//   `Failed to parse amount: ${amount} with decimals: ${WBTCDecimals}`,
-			//   error
-			// );
 			return undefined;
 		}
 	}, [amount, WBTCDecimals]);
-
-	// const parsedReceive = useMemo(() => {
-	//   return LPDecimals ? parseUnits(receive.toString(), LPDecimals) : undefined;
-	// }, [receive, LPDecimals]);
 
 	const totalBTCBalance = useMemo(() => {
 		return AAVEWBTCTokenBalance + wBTCDAOBalance;
@@ -192,37 +184,6 @@ const Dashboard = () => {
 			? formatUnits(displayShare, AAVEWBTCTokenDecimals)
 			: undefined;
 	}, [totalBTCBalance]);
-
-	// let finalValue;
-
-	// const newCalculateSharePrice= useMemo(() => {
-
-	//   console.log("dao address " + AAVEWBTCOwner)
-
-	//   // const totalBTCBalance = AAVEWBTCTokenBalance + wBTCDAOBalance
-
-	//   // const LPBalance = lpTokenSupply - LPBalanceDAO;
-
-	//   // const displayShare = totalBTCBalance / LPBalance;
-
-	//   // console.log("AAVEWBTCTokenBalance " + AAVEWBTCTokenBalance);
-	//   // console.log("wBTCDAOBalance " + wBTCDAOBalance);
-	//   // console.log("total btc balance " + totalBTCBalance);
-	//   // console.log("lpTokenSupply " + lpTokenSupply);
-	//   // console.log("LPBalance " + LPBalance);
-	//   // console.log("lp balance dao " + LPBalanceDAO)
-	//   // console.log("displayShare " + displayShare);
-
-	//   const totalBTCBalance = AAVEWBTCTokenBalance
-
-	//   const finalValue = totalBTCBalance
-
-	//   console.log("newTotalBTCBalance " + totalBTCBalance)
-
-	//   return finalValue !== undefined && AAVEWBTCTokenDecimals
-	//     ? formatUnits(finalValue, AAVEWBTCTokenDecimals)
-	//     : undefined;
-	// }, [finalValue]);
 
 	const {
 		data: approveData,

@@ -50,6 +50,7 @@ import altDaoLogo from "../../assets/images/images_dashboard/altportfolio.webp";
 import { CovalentClient } from "@covalenthq/client-sdk";
 import { getTokenHoldersSum } from "../../api/api.js";
 import { useChainId } from "wagmi";
+import { useSwitchChain } from "wagmi";
 
 function roundUpToThousands(number) {
 	return Math.ceil(Number(number) * 1000) / 1000;
@@ -118,13 +119,21 @@ const GodObject = {
 	},
 };
 
+function isChainSupported(chain, pathname) {
+	if (chain === undefined) {
+		console.log("chain is undefined");
+		return chain;
+	}
+	if (chain.id === 42161 && pathname === "/strategies/altporfoliodao/swap") {
+		return "eth";
+	}
+	return chain;
+}
+
 const Dashboard = () => {
 	let { pathname } = useLocation();
-	console.log("search2" + pathname);
 
-	const chainId = useChainId();
-
-	console.log(chainId);
+	const { chains, switchChain } = useSwitchChain();
 
 	let [sumDao, setSumDao] = useState(0);
 	const [sumUsersLpTokens, setSumUsersLpTokens] = useState(0);
@@ -145,7 +154,7 @@ const Dashboard = () => {
 			setIsBtcDao(false);
 			return;
 		}
-	}, []);
+	}, [pathname]);
 
 	const client = new CovalentClient("cqt_rQD8qf993P8D6rGM68tRFqYVbdbM");
 	useEffect(() => {
@@ -153,7 +162,6 @@ const Dashboard = () => {
 			"arbitrum-mainnet",
 			GodObject[pathname].addressDao
 		).then((resp) => {
-			console.log("Wallet address:", GodObject[pathname].addressDao);
 			const items = resp.data.items.filter(
 				(i) => i.balance > 0 && i.contract_name !== "XDAO"
 			);
@@ -212,7 +220,16 @@ const Dashboard = () => {
 
 	const { address, isConnected, chain } = useAccount();
 
-	console.log("chain", chain);
+	useEffect(() => {
+		console.log("че тут происходит: ", chain);
+		// console.log("че тут происходит: ", isChainSupported(chain, pathname));
+
+		// if ((pathname === "/strategies/altporfoliodao/swap", chain)) {
+		// 	console.log("altporfoliodao121212, ", chain);
+		// 	if (chain.id === 42161) {
+		// 	}
+		// }
+	}, [pathname, chain]);
 
 	const saleInfo = useSaleInfo({
 		tokenAddress: AxiomToken.address,
@@ -336,8 +353,6 @@ const Dashboard = () => {
 			: undefined;
 	}, [LPBalanceUser, LPDecimals]);
 
-	console.log("front " + formattedLPBalanceUser);
-
 	const parsedAmount = useMemo(() => {
 		if (!USDTDecimals) return undefined;
 		if (isNaN(amount) || amount <= 0) return undefined;
@@ -353,9 +368,6 @@ const Dashboard = () => {
 			return undefined;
 		}
 	}, [amount, USDTDecimals]);
-
-	console.log("parsedAmount " + parsedAmount);
-	console.log("lpbalanceuser " + LPBalanceUser);
 
 	const totalBTCBalance = useMemo(() => {
 		return AAVEWBTCTokenBalance + wBTCDAOBalance;
@@ -414,11 +426,6 @@ const Dashboard = () => {
 	}, [buyStatus, buyData, buyTxStatus]);
 
 	const handleSwitch = () => {
-		// const _amount = amount;
-		// const _receive = receive;
-
-		// setAmount(_receive);
-		// setReceive(_amount);
 		setIsSwitched((prev) => !prev);
 	};
 
@@ -427,11 +434,10 @@ const Dashboard = () => {
 		console.log("sell");
 	};
 
-	console.log("Wallet address:", address);
-
-	useEffect(() => {
-		console.log("isSwitched: ", isSwitched);
-	}, [isSwitched]);
+	const handleSwitchChain = () => {
+		console.log("switchChain");
+		switchChain({ chainId: 1 });
+	};
 
 	const handleMaxUSDT = () => {
 		if (!isBtcDao) {
@@ -634,18 +640,18 @@ const Dashboard = () => {
 		buyTxStatus,
 	]);
 
-	console.log("search", pathname);
-
 	useEffect(() => {
-		console.log("logpathnameinside " + pathname);
-
 		if (GodObject[pathname]) {
 			setCurrentLPAddress(GodObject[pathname].addressLp);
 		}
-
-		console.log("newcurrent" + currentLPAddress);
 	}, [currentLPAddress]);
-	console.log("newcurrent1" + currentLPAddress);
+
+	useEffect(() => {
+		console.log(
+			"isChainSupported(chain, pathname): ",
+			isChainSupported(chain, pathname)
+		);
+	}, [pathname, chain]);
 
 	return (
 		<>
@@ -695,7 +701,9 @@ const Dashboard = () => {
 														/>
 													</div>
 												</div>
-												{isConnected && chain ? (
+												{isConnected &&
+												isChainSupported(chain, pathname) &&
+												isChainSupported(chain, pathname) !== "eth" ? (
 													<h3>
 														На кошельке:{" "}
 														{formattedLPBalanceUser !== undefined ? (
@@ -751,7 +759,9 @@ const Dashboard = () => {
 														/>
 													</div>
 												</div>
-												{isConnected && chain ? (
+												{isConnected &&
+												isChainSupported(chain, pathname) &&
+												isChainSupported(chain, pathname) !== "eth" ? (
 													<h3>
 														На кошельке:{" "}
 														{/* {formattedUSDTBalance !== undefined ? (
@@ -810,7 +820,9 @@ const Dashboard = () => {
 													</div>
 												</div>
 
-												{isConnected && chain ? (
+												{isConnected &&
+												isChainSupported(chain, pathname) &&
+												isChainSupported(chain, pathname) !== "eth" ? (
 													<h3>
 														На кошельке:{" "}
 														{!isBtcDao ? (
@@ -875,7 +887,9 @@ const Dashboard = () => {
 													</div>
 												</div>
 
-												{isConnected && chain ? (
+												{isConnected &&
+												isChainSupported(chain, pathname) &&
+												isChainSupported(chain, pathname) !== "eth" ? (
 													<h3>
 														На кошельке:{" "}
 														{formattedLPBalanceUser !== undefined ? (
@@ -899,7 +913,9 @@ const Dashboard = () => {
 									</div>
 								</div>
 								<div className="conteiner-content-button">
-									{isConnected && chain ? (
+									{isConnected &&
+									isChainSupported(chain, pathname) &&
+									isChainSupported(chain, pathname) !== "eth" ? (
 										!XDAOTokenConditions ? (
 											<button className="content-button inactive button_swap">
 												Требуется 5 XDAO
@@ -937,6 +953,14 @@ const Dashboard = () => {
 												{buyText}
 											</button>
 										)
+									) : isChainSupported(chain, pathname) === "eth" ? (
+										<button
+											onClick={handleSwitchChain}
+											className="content-button wrong-network text button_swap"
+											type="button"
+										>
+											Переключить на eth
+										</button>
 									) : (
 										<CustomConnectButton />
 									)}

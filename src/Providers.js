@@ -8,6 +8,7 @@ import {
 import { WagmiProvider } from "wagmi";
 import { arbitrum, mainnet } from "wagmi/chains";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import { useLocation } from "react-router-dom";
 
 const queryClient = new QueryClient();
 
@@ -16,7 +17,7 @@ const projectId = "c4e935871ace4e533bf1de50c5f95bcd";
 const config = getDefaultConfig({
 	appName: "App",
 	projectId: projectId,
-	chains: [arbitrum],
+	chains: [arbitrum, mainnet],
 });
 
 export const Providers = ({ children }) => {
