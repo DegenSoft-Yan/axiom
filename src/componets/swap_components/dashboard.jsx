@@ -49,6 +49,7 @@ import safeDaoLogo from "../../assets/images/images_dashboard/safedaologo.png";
 import altDaoLogo from "../../assets/images/images_dashboard/altportfolio.webp";
 import { CovalentClient } from "@covalenthq/client-sdk";
 import { getTokenHoldersSum } from "../../api/api.js";
+import { useChainId } from "wagmi";
 
 function roundUpToThousands(number) {
 	return Math.ceil(Number(number) * 1000) / 1000;
@@ -121,6 +122,10 @@ const Dashboard = () => {
 	let { pathname } = useLocation();
 	console.log("search2" + pathname);
 
+	const chainId = useChainId();
+
+	console.log(chainId);
+
 	let [sumDao, setSumDao] = useState(0);
 	const [sumUsersLpTokens, setSumUsersLpTokens] = useState(0);
 	const [isBtcDao, setIsBtcDao] = useState(false);
@@ -131,8 +136,6 @@ const Dashboard = () => {
 			setCurrentLPAddress(GodObject[pathname].addressLp);
 		}
 	}, [pathname]);
-	console.log("currentlpaddress " + currentLPAddress);
-	console.log(pathname);
 
 	useEffect(() => {
 		if (pathname === "/strategies/btcdao/swap") {
@@ -178,8 +181,6 @@ const Dashboard = () => {
 		}
 
 		if (sumDao && sumUsersLpTokens) {
-			console.log("sumDau: ", sumDao);
-			console.log("sumUsersLpTokens: ", sumUsersLpTokens);
 			const currentPrice = sumDao / sumUsersLpTokens;
 			setResult(currentPrice.toFixed(3));
 		}
@@ -210,6 +211,9 @@ const Dashboard = () => {
 	const requiredXDAOTokens = 5000000000000000000;
 
 	const { address, isConnected, chain } = useAccount();
+
+	console.log("chain", chain);
+
 	const saleInfo = useSaleInfo({
 		tokenAddress: AxiomToken.address,
 		index: CURRENT_DAO_INDEX,
@@ -247,11 +251,6 @@ const Dashboard = () => {
 	});
 
 	useEffect(() => {
-		console.log("balanceLP", balanceLP);
-		console.log("balanceARBBTC", balanceARBBTC);
-		console.log("totalSupplyLp", totalSupplyLp);
-		console.log("user LPBalance " + LPBalanceUser);
-
 		if (balanceLP && balanceARBBTC && totalSupplyLp && isBtcDao && isBtcDao) {
 			const res =
 				formatUnits(balanceARBBTC, 8) /
@@ -280,16 +279,6 @@ const Dashboard = () => {
 		tokenAddress: currentLPAddress,
 		owner: !refetch && address,
 	});
-
-	console.log(LPBalanceUser + " LPBALANCEUSER");
-	console.log(address);
-	console.log(currentLPAddress + " is current lp address");
-	// anchor
-	console.log(useLocation());
-
-	console.log("check " + GodObject[pathname]);
-	// setCurrentLPAddress(GodObject[pathname2]);
-	console.log("check current lp address " + currentLPAddress);
 
 	const XDAOTokenBalance = useBalanceOf({
 		tokenAddress: XDAOToken.address,
@@ -329,9 +318,6 @@ const Dashboard = () => {
 			: undefined;
 	}, [WBTCBalance, WBTCDecimals]);
 
-	//
-	// GET USDT BALANCE
-
 	const formattedUSDTBalance = useMemo(() => {
 		return USDTBalance !== undefined && USDTDecimals
 			? formatUnits(USDTBalance, USDTDecimals)
@@ -339,9 +325,6 @@ const Dashboard = () => {
 	}, [USDTBalance, USDTDecimals]);
 
 	const formattedAAVEWBTCTokenBalance = useMemo(() => {
-		console.log("AAVEWBTCTokenBalance " + AAVEWBTCTokenBalance);
-		// console.log("formattedAAVEWBTCTokenBalance" + formattedAAVEWBTCTokenBalance)
-
 		return AAVEWBTCTokenBalance !== undefined && AAVEWBTCTokenDecimals
 			? formatUnits(AAVEWBTCTokenBalance, AAVEWBTCTokenDecimals)
 			: undefined;
@@ -361,19 +344,12 @@ const Dashboard = () => {
 
 		const minAmount = 1 / Math.pow(10, USDTDecimals);
 		if (amount < minAmount) {
-			// console.warn(
-			//   `Amount ${amount} is too small to convert with ${WBTCDecimals} decimals.`
-			// );
 			return undefined;
 		}
 
 		try {
 			return parseUnits(String(amount), USDTDecimals);
 		} catch (error) {
-			// console.error(
-			//   `Failed to parse amount: ${amount} with decimals: ${WBTCDecimals}`,
-			//   error
-			// );
 			return undefined;
 		}
 	}, [amount, USDTDecimals]);
@@ -381,32 +357,13 @@ const Dashboard = () => {
 	console.log("parsedAmount " + parsedAmount);
 	console.log("lpbalanceuser " + LPBalanceUser);
 
-	// const parsedReceive = useMemo(() => {
-	//   return LPDecimals ? parseUnits(receive.toString(), LPDecimals) : undefined;
-	// }, [receive, LPDecimals]);
-
 	const totalBTCBalance = useMemo(() => {
 		return AAVEWBTCTokenBalance + wBTCDAOBalance;
 	}, [AAVEWBTCTokenBalance, wBTCDAOBalance]);
 
 	const formattedSharePrice = useMemo(() => {
-		console.log("formattedSharePrice: dao address " + AAVEWBTCOwner);
-		console.log(
-			"formattedSharePrice AAVEWBTCTokenBalance: " + AAVEWBTCTokenBalance
-		);
-
 		const LPBalance = lpTokenSupply - LPBalanceDAO;
 		const displayShare = totalBTCBalance / LPBalance;
-
-		console.log(
-			"formattedSharePrice: AAVEWBTCTokenBalance " + AAVEWBTCTokenBalance
-		);
-		console.log("formattedSharePrice: wBTCDAOBalance " + wBTCDAOBalance);
-		console.log("formattedSharePrice: total btc balance " + totalBTCBalance);
-		console.log("formattedSharePrice: lpTokenSupply " + lpTokenSupply);
-		console.log("formattedSharePrice: LPBalance " + LPBalance);
-		console.log("formattedSharePrice: lp balance dao " + LPBalanceDAO);
-		console.log("formattedSharePrice: displayShare " + displayShare);
 
 		return displayShare !== undefined && AAVEWBTCTokenDecimals
 			? formatUnits(displayShare, AAVEWBTCTokenDecimals)

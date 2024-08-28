@@ -15,10 +15,10 @@ import { getTokenHoldersSum } from "../../api/api";
 
 export const AltDao = () => {
 	const client = new GoldRushClient("cqt_rQD8qf993P8D6rGM68tRFqYVbdbM");
-	// const clientNew = new GoldRushClient("cqt_rQD8qf993P8D6rGM68tRFqYVbdbM");
 	const [tokens, setTokens] = useState([]);
 	const [sumDao, setSumDao] = useState(0);
 	const [sumUsersLpTokens, setSumUsersLpTokens] = useState(0);
+
 	useEffect(() => {
 		client.BalanceService.getTokenBalancesForWalletAddress(
 			"arbitrum-mainnet",
@@ -40,13 +40,13 @@ export const AltDao = () => {
 		});
 	}, []);
 
+	// geting summ of all tokens which users have
 	useEffect(() => {
 		const foobar = async () => {
 			const sum = await getTokenHoldersSum(
-				"0x058ECb8723A77D22E331D1e0e01625B18BD33354"
+				DAOs.axAltPortfolioLP // лп токен адрес
 			);
 			if (sum) {
-				// console.log("sum: ", sum);
 				setSumUsersLpTokens(sum);
 			}
 		};
@@ -67,11 +67,9 @@ export const AltDao = () => {
 		owner: "0xbf60a62a31f72df0806eaaf73d698a3862c8aa44", // dao
 	});
 
+	// seting final price
 	useEffect(() => {
 		if (sumDao && sumUsersLpTokens) {
-			console.log("sumDau: ", sumDao);
-			console.log("sumUsersLpTokens: ", sumUsersLpTokens);
-
 			const currentPrice = sumDao / sumUsersLpTokens;
 			setResult(currentPrice.toFixed(2));
 		}

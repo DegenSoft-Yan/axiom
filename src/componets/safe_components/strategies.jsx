@@ -48,10 +48,7 @@ const Strategies = ({ tokens }) => {
 								{tokens ? (
 									<>
 										{tokens.map((t, index) => (
-											<div
-												className="strategies-conteiner-item_safe"
-												// style={{ display: "flex", alignItems: "center" }}
-											>
+											<div className="strategies-conteiner-item_safe">
 												<img src={getLogo(t.token)} alt="" />
 												<h2>
 													{t.token}
@@ -60,7 +57,7 @@ const Strategies = ({ tokens }) => {
 														<>
 															-{" "}
 															<span style={{ fontWeight: "bold" }}>
-																{t.amount}
+																{t.amount === "0.00" ? "<0.01" : t.amount}
 															</span>
 														</>
 													)}
