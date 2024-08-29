@@ -119,6 +119,10 @@ const GodObject = {
 	},
 };
 
+
+const crowdModuleETH = '0x711E14eBC41A8f1595433FA4409a50BC9838Fc03';
+const crowdModuleARB = '0x0cf784bba0FFA0a7006f3Ee7e4357E643a07F6e7';
+
 function isChainSupported(chain, pathname) {
 	if (chain === undefined) {
 		console.log("chain is undefined");
@@ -322,7 +326,9 @@ const Dashboard = () => {
 	const USDTAllowance = useAllowance({
 		tokenAddress: GodObject[pathname].addressUSDT,
 		owner: !refetch && address,
-		spender: XDAO.address,
+		spender: (chain.id == 1)
+		? crowdModuleETH
+		: crowdModuleARB
 	});
 
 	const XDAOTokenConditions = useMemo(() => {
@@ -398,7 +404,9 @@ const Dashboard = () => {
 		tokenAddress: isBtcDao
 			? GodObject[pathname].addressWBTC
 			: GodObject[pathname].addressUSDT,
-		spender: XDAO.address,
+		spender: (chain.id == 1)
+		? crowdModuleETH
+		: crowdModuleARB,
 		amount: parsedAmount,
 	});
 
@@ -408,6 +416,9 @@ const Dashboard = () => {
 		txStatus: buyTxStatus,
 		write: buyWrite,
 	} = useBuyWrite({
+		crowdModule: (chain.id == 1)
+		? crowdModuleETH
+		: crowdModuleARB,
 		tokenAddress: GodObject[pathname].addressDao,
 		amount: parsedAmount,
 	});
@@ -653,6 +664,9 @@ const Dashboard = () => {
 			"isChainSupported(chain, pathname): ",
 			isChainSupported(chain, pathname)
 		);
+		console.log("current chain" + chain.id)
+		console.log(typeof(chain.id))
+
 	}, [pathname, chain]);
 
 	return (
