@@ -78,9 +78,9 @@ export const useContractWrite = ({ address, abi, functionName, args }) => {
 	};
 };
 
-export const useBuyWrite = ({ tokenAddress, amount }) =>
+export const useBuyWrite = ({ crowdModule, tokenAddress, amount }) =>
 	useContractWrite({
-		address: XDAO.address,
+		address: crowdModule,
 		abi: XDAO.abi,
 		functionName: "buy",
 		args: [tokenAddress, amount, false],
