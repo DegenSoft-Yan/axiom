@@ -12,12 +12,15 @@ import { parseUnits, formatUnits } from "viem";
 import { useBalanceOf, useTotalSupply } from "../../hooks/useContactRead";
 import { Providers } from "../../Providers";
 import { getTokenHoldersSum } from "../../api/api";
+import { useLocation } from "react-router-dom";
 
 export const UltraDao = () => {
 	const client = new CovalentClient("cqt_rQD8qf993P8D6rGM68tRFqYVbdbM");
 	const [tokens, setTokens] = useState([]);
 	const [sumDao, setSum] = useState(0);
 	const [sumUsersLpTokens, setSumUsersLpTokens] = useState(0);
+	const { pathname } = useLocation();
+
 	useEffect(() => {
 		client.BalanceService.getTokenBalancesForWalletAddress(
 			"arbitrum-mainnet",
@@ -35,7 +38,7 @@ export const UltraDao = () => {
 			setSum(sum.toFixed(0));
 			setTokens(_tokens.filter((t) => t.token !== "XDAO"));
 		});
-	}, []);
+	}, [pathname]);
 
 	useEffect(() => {
 		const foobar = async () => {
@@ -47,7 +50,7 @@ export const UltraDao = () => {
 			}
 		};
 		foobar();
-	}, []);
+	}, [pathname]);
 
 	const [result, setResult] = useState(0);
 	const totalSupplyLp = useTotalSupply({
@@ -65,13 +68,10 @@ export const UltraDao = () => {
 
 	useEffect(() => {
 		if (sumDao && sumUsersLpTokens) {
-			console.log("sumDau: ", sumDao);
-			console.log("sumUsersLpTokens: ", sumUsersLpTokens);
-
 			const currentPrice = sumDao / sumUsersLpTokens;
 			setResult(currentPrice.toFixed(3));
 		}
-	}, [sumDao, sumUsersLpTokens]);
+	}, [sumDao, sumUsersLpTokens, pathname]);
 
 	return (
 		<div className="main">

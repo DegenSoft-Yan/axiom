@@ -27,7 +27,7 @@ import crowdAbi from "./abi/crowd.json";
 
 export const contracts = {
 	XDAO: {
-		address: "0x0cf784bba0FFA0a7006f3Ee7e4357E643a07F6e7",
+		address: "0x711E14eBC41A8f1595433FA4409a50BC9838Fc03",
 		abi: XDAOabi,
 	},
 	XDAOToken: {

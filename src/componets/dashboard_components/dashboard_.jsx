@@ -374,8 +374,6 @@ const Dashboard = () => {
 
 			// Обновляем состояние complexCrowdData
 			setComplexCrowdData(dataUser);
-
-			console.log("crowd data:", dataUser);
 		});
 
 		///////
@@ -434,8 +432,6 @@ const Dashboard = () => {
 			// 	"axSAFE",
 
 			//   ]
-
-			console.log("get in god condition");
 			const displayShareData = {};
 
 			LPNames.forEach((item, index) => {
@@ -444,32 +440,10 @@ const Dashboard = () => {
 
 				let cleanSupply =
 					getLPTotalSupplyFixByName(item) - getCrowdLPBalanceByName(item);
-				console.log(
-					"getLPTotalSupplyFixByName " +
-						getLPTotalSupplyFixByName(item) +
-						" " +
-						item
-				);
-				console.log(
-					"getCrowdLPBalanceByName " +
-						getCrowdLPBalanceByName(item) +
-						" " +
-						item
-				);
-				console.log("cleanSupply " + item + " " + cleanSupply);
 
 				let userShare = getLPBalanceUserByName(item) / cleanSupply;
-				console.log(
-					"getLPBalanceUserByName " + getLPBalanceUserByName(item) + " " + item
-				);
 
-				console.log("user share  " + item + " " + userShare);
 				let userValue = userShare * getSumDaoByName(item);
-				console.log("getSumDaoByName " + getSumDaoByName(item) + " $");
-
-				console.log("userValue " + item + " " + userValue);
-				console.log("");
-				console.log("");
 
 				displayShareData[item] = userValue.toFixed(3);
 			});
@@ -487,7 +461,6 @@ const Dashboard = () => {
 			//
 			//
 		} else {
-			console.log("not get");
 		}
 	}, []);
 
