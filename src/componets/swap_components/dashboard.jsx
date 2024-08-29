@@ -58,7 +58,7 @@ function roundUpToThousands(number) {
 const url =
 	"https://api.arbiscan.io/api?module=token&action=tokenholderlist&contractaddress=0x7f1Dd51843D8C4106213d0a4C3a7e96306C5d86F&&apikey=CC8VKJEZ5IES95BEMREN2FT3HUHITIS9IJ";
 
-const crowdAddress = "0x0cf784bba0FFA0a7006f3Ee7e4357E643a07F6e7";
+const crowdAddress = "0x711E14eBC41A8f1595433FA4409a50BC9838Fc03";
 
 const GodObject = {
 	"/strategies/ultrdao/swap": {
@@ -121,7 +121,6 @@ const GodObject = {
 
 function isChainSupported(chain, pathname) {
 	if (chain === undefined) {
-		console.log("chain is undefined");
 		return chain;
 	}
 	if (chain.id === 42161 && pathname === "/strategies/altporfoliodao/swap") {
@@ -204,7 +203,7 @@ const Dashboard = () => {
 	});
 	const balanceLP = useBalanceOf({
 		tokenAddress: "0xd1903ee89EF554dDC92cD2C3143F752BC85FDB3c",
-		owner: "0x0cf784bba0FFA0a7006f3Ee7e4357E643a07F6e7",
+		owner: "0x711E14eBC41A8f1595433FA4409a50BC9838Fc03",
 	});
 
 	const [amount, setAmount] = useState(0);
@@ -220,17 +219,6 @@ const Dashboard = () => {
 
 	const { address, isConnected, chain } = useAccount();
 
-	useEffect(() => {
-		console.log("че тут происходит: ", chain);
-		// console.log("че тут происходит: ", isChainSupported(chain, pathname));
-
-		// if ((pathname === "/strategies/altporfoliodao/swap", chain)) {
-		// 	console.log("altporfoliodao121212, ", chain);
-		// 	if (chain.id === 42161) {
-		// 	}
-		// }
-	}, [pathname, chain]);
-
 	const saleInfo = useSaleInfo({
 		tokenAddress: AxiomToken.address,
 		index: CURRENT_DAO_INDEX,
@@ -238,7 +226,7 @@ const Dashboard = () => {
 
 	let balanceLPCrowdModule = useBalanceOf({
 		tokenAddress: "0x0a240713C9dB821C51f36F4621d6ac1F6e4D3745", // lp token
-		owner: "0x0cf784bba0FFA0a7006f3Ee7e4357E643a07F6e7", // crowd module
+		owner: "0x711E14eBC41A8f1595433FA4409a50BC9838Fc03", // crowd module
 	});
 
 	const feeRate = useRegularFeeRate();
@@ -278,11 +266,7 @@ const Dashboard = () => {
 
 	useEffect(() => {
 		const getData = async () => {
-			fetch(url)
-				.then((res) => res.json())
-				.then((res) =>
-					console.log("BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA: ", res)
-				);
+			fetch(url).then((res) => res.json());
 		};
 		getData();
 	}, []);
@@ -433,11 +417,9 @@ const Dashboard = () => {
 
 	const handleSell = () => {
 		toast("Заявка отправлена на обработку");
-		console.log("sell");
 	};
 
 	const handleSwitchChain = () => {
-		console.log("switchChain");
 		switchChain({ chainId: 1 });
 	};
 
@@ -647,13 +629,6 @@ const Dashboard = () => {
 			setCurrentLPAddress(GodObject[pathname].addressLp);
 		}
 	}, [currentLPAddress]);
-
-	useEffect(() => {
-		console.log(
-			"isChainSupported(chain, pathname): ",
-			isChainSupported(chain, pathname)
-		);
-	}, [pathname, chain]);
 
 	return (
 		<>

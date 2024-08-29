@@ -75,6 +75,7 @@ const WalletCopyButton = () => {
 let currentDaoAddress;
 
 const HowWeWork = ({ price, isBtc, dao }) => {
+	console.log(price);
 	const safedaotext = `
     <p>
       	Подходит для консервативных инвесторов,<br />

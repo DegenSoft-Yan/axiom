@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import { parseUnits, formatUnits } from "viem";
 import { useBalanceOf, useTotalSupply } from "../../hooks/useContactRead";
 import { Providers } from "../../Providers";
+import { useLocation } from "react-router-dom";
 
 function roundUpToThousands(number) {
 	return Math.ceil(Number(number) * 1000) / 1000;
@@ -19,6 +20,7 @@ function roundUpToThousands(number) {
 export const BtcDao = () => {
 	const client = new CovalentClient("cqt_rQD8qf993P8D6rGM68tRFqYVbdbM");
 	const [tokens, setTokens] = useState([]);
+	const { pathname } = useLocation();
 
 	useEffect(() => {
 		client.BalanceService.getTokenBalancesForWalletAddress(
@@ -26,7 +28,6 @@ export const BtcDao = () => {
 			DAOs.axBTC
 		).then((resp) => {
 			const items = resp.data.items.filter((i) => i.quote > 0);
-			console.log(items);
 			const _tokens = items.map((i) => ({
 				img: i.logo_url,
 				token: i.contract_ticker_symbol,
@@ -51,26 +52,9 @@ export const BtcDao = () => {
 
 	useEffect(() => {
 		if (balanceLP && balanceARBBTC && totalSupplyLp) {
-			console.log(
-				"11111111111111111111111111111111: ",
-				formatUnits(balanceARBBTC, 8)
-			);
-			console.log(
-				"22222222222222222222222222222222: ",
-				formatUnits(totalSupplyLp - balanceLP, 18)
-			);
-			console.log(
-				"333333333333333333333333333333333: ",
-				formatUnits(balanceARBBTC, 8) /
-					formatUnits(totalSupplyLp - balanceLP, 18)
-			);
 			const res =
 				formatUnits(balanceARBBTC, 8) /
 				formatUnits(totalSupplyLp - balanceLP, 18);
-			console.log(
-				"444444444444444444444444444444444444444: ",
-				roundUpToThousands(res)
-			);
 			setResult(roundUpToThousands(res));
 		}
 	}, [balanceARBBTC, balanceLP, totalSupplyLp]);

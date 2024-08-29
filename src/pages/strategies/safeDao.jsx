@@ -33,6 +33,7 @@ export const SafeDao = () => {
 			}));
 			setTokens(_tokens.filter((t) => t.token !== "XDAO"));
 			const sum = items.map((i) => i.quote).reduce((x, y) => x + y, 0);
+			console.log("getting balances: ", sum);
 			setSumDao(sum.toFixed(0));
 		});
 	}, []);
@@ -43,6 +44,7 @@ export const SafeDao = () => {
 				"0x72F2fE2dF156ab863200B011A0b008A8a306F926"
 			);
 			if (sum) {
+				console.log("getting holders balances:", sum);
 				setSumUsersLpTokens(sum);
 			}
 		};
@@ -64,10 +66,8 @@ export const SafeDao = () => {
 	});
 
 	useEffect(() => {
+		console.log("set result");
 		if (sumDao && sumUsersLpTokens) {
-			console.log("sumDau: ", sumDao);
-			console.log("sumUsersLpTokens: ", sumUsersLpTokens);
-
 			const currentPrice = sumDao / sumUsersLpTokens;
 			setResult(currentPrice.toFixed(3));
 		}
