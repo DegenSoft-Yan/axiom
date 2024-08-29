@@ -12,7 +12,7 @@ const Footer = () => {
 						</a>{" "}
 					</div>
 					<div className="footer-container-contant">
-						<h2>Copyright © 2023 AXIOM Data Center</h2>
+						<h2>Copyright © 2024 AXIOM Crypto Platform</h2>
 						<p>Все права защищены.</p>
 					</div>
 				</div>
