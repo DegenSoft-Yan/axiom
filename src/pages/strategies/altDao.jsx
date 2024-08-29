@@ -12,8 +12,10 @@ import { parseUnits, formatUnits } from "viem";
 import { useBalanceOf, useTotalSupply } from "../../hooks/useContactRead";
 import { Providers } from "../../Providers";
 import { getTokenHoldersSum } from "../../api/api";
+import { useLocation } from "react-router-dom";
 
 export const AltDao = () => {
+	const { pathname } = useLocation();
 	const client = new GoldRushClient("cqt_rQD8qf993P8D6rGM68tRFqYVbdbM");
 	const [tokens, setTokens] = useState([]);
 	const [sumDao, setSumDao] = useState(0);
@@ -38,7 +40,7 @@ export const AltDao = () => {
 			const sum = items.map((i) => i.quote).reduce((x, y) => x + y, 0);
 			setSumDao(sum.toFixed(0));
 		});
-	}, []);
+	}, [pathname]);
 
 	// geting summ of all tokens which users have
 	useEffect(() => {
@@ -51,7 +53,7 @@ export const AltDao = () => {
 			}
 		};
 		foobar();
-	}, []);
+	}, [pathname]);
 
 	const [result, setResult] = useState(0);
 	const totalSupplyLp = useTotalSupply({
@@ -69,11 +71,14 @@ export const AltDao = () => {
 
 	// seting final price
 	useEffect(() => {
+		console.log("sumDao: ", sumDao);
+		console.log("sumUsersLpTokens: ", sumUsersLpTokens);
+		console.log("totalSupplyLp: ", pathname);
 		if (sumDao && sumUsersLpTokens) {
 			const currentPrice = sumDao / sumUsersLpTokens;
 			setResult(currentPrice.toFixed(2));
 		}
-	}, [sumDao, sumUsersLpTokens]);
+	}, [sumDao, sumUsersLpTokens, pathname]);
 
 	return (
 		<div className="main">

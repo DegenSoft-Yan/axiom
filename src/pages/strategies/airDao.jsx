@@ -12,12 +12,14 @@ import { parseUnits, formatUnits } from "viem";
 import { useBalanceOf, useTotalSupply } from "../../hooks/useContactRead";
 import { Providers } from "../../Providers";
 import { getTokenHoldersSum } from "../../api/api";
+import { useLocation } from "react-router-dom";
 
 function roundUpToThousands(number) {
 	return Math.ceil(Number(number) * 1000) / 1000;
 }
 
 export const AirDao = () => {
+	const { pathname } = useLocation();
 	const client = new CovalentClient("cqt_rQD8qf993P8D6rGM68tRFqYVbdbM");
 	const [tokens, setTokens] = useState([]);
 	const [sumDao, setSumDao] = useState(0);
@@ -41,7 +43,7 @@ export const AirDao = () => {
 			setTokens(_tokens.filter((t) => t.token !== "XDAO"));
 			setSumDao(sum.toFixed(0));
 		});
-	}, []);
+	}, [pathname]);
 
 	useEffect(() => {
 		const foobar = async () => {
@@ -53,7 +55,7 @@ export const AirDao = () => {
 			}
 		};
 		foobar();
-	}, []);
+	}, [pathname]);
 
 	const [result, setResult] = useState(0);
 	const totalSupplyLp = useTotalSupply({
@@ -77,7 +79,7 @@ export const AirDao = () => {
 			const currentPrice = sumDao / sumUsersLpTokens;
 			setResult(currentPrice.toFixed(3));
 		}
-	}, [sumDao, sumUsersLpTokens]);
+	}, [sumDao, sumUsersLpTokens, pathname]);
 
 	return (
 		<div className="main">

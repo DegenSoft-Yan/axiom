@@ -113,9 +113,9 @@ const GodObject = {
 		token1Logo: usdt,
 		token2Logo: altDaoLogo,
 		logoBottom: altDaoLogo,
-		addressDao: "0xbf60a62a31f72df0806eaaf73d698a3862c8aa44",
-		addressLp: "0x058ECb8723A77D22E331D1e0e01625B18BD33354",
-		addressUSDT: "0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
+		addressDao: "0xeebe6f7fd87ed28748f5e4d3e339ba0f28e90782",
+		addressLp: "0x8C3fce8E9bB082eFe5fB8922A45D0619Cae02435",
+		addressUSDT: "0xdac17f958d2ee523a2206206994597c13d831ec7",
 	},
 };
 
@@ -395,7 +395,9 @@ const Dashboard = () => {
 		txStatus: approveTxStatus,
 		write: approveWrite,
 	} = useApproveWrite({
-		tokenAddress: approveToken,
+		tokenAddress: isBtcDao
+			? GodObject[pathname].addressWBTC
+			: GodObject[pathname].addressUSDT,
 		spender: XDAO.address,
 		amount: parsedAmount,
 	});
