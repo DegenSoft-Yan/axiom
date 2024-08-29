@@ -82,8 +82,6 @@ const Dashboard = () => {
 		tokenAddress: LPToken.address,
 	});
 
-	console.log("lp token supply " + lpTokenSupply);
-
 	const LPBalanceDAO = useBalanceOf({
 		tokenAddress: LPToken.address,
 		owner: AAVEWBTCOwner,
@@ -124,9 +122,6 @@ const Dashboard = () => {
 	}, [WBTCBalance, WBTCDecimals]);
 
 	const formattedAAVEWBTCTokenBalance = useMemo(() => {
-		console.log("AAVEWBTCTokenBalance " + AAVEWBTCTokenBalance);
-		// console.log("formattedAAVEWBTCTokenBalance" + formattedAAVEWBTCTokenBalance)
-
 		return AAVEWBTCTokenBalance !== undefined && AAVEWBTCTokenDecimals
 			? formatUnits(AAVEWBTCTokenBalance, AAVEWBTCTokenDecimals)
 			: undefined;
@@ -162,23 +157,8 @@ const Dashboard = () => {
 	}, [AAVEWBTCTokenBalance, wBTCDAOBalance]);
 
 	const formattedSharePrice = useMemo(() => {
-		console.log("formattedSharePrice: dao address " + AAVEWBTCOwner);
-		console.log(
-			"formattedSharePrice AAVEWBTCTokenBalance: " + AAVEWBTCTokenBalance
-		);
-
 		const LPBalance = lpTokenSupply - LPBalanceDAO;
 		const displayShare = totalBTCBalance / LPBalance;
-
-		console.log(
-			"formattedSharePrice: AAVEWBTCTokenBalance " + AAVEWBTCTokenBalance
-		);
-		console.log("formattedSharePrice: wBTCDAOBalance " + wBTCDAOBalance);
-		console.log("formattedSharePrice: total btc balance " + totalBTCBalance);
-		console.log("formattedSharePrice: lpTokenSupply " + lpTokenSupply);
-		console.log("formattedSharePrice: LPBalance " + LPBalance);
-		console.log("formattedSharePrice: lp balance dao " + LPBalanceDAO);
-		console.log("formattedSharePrice: displayShare " + displayShare);
 
 		return displayShare !== undefined && AAVEWBTCTokenDecimals
 			? formatUnits(displayShare, AAVEWBTCTokenDecimals)
