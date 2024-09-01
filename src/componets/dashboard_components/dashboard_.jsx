@@ -1,20 +1,20 @@
 import { useEffect, useState, useMemo } from "react";
 import { useAccount, useReadContracts } from "wagmi";
 // import { useContractRead } from '@wagmi/core'
-import { CovalentClient } from "@covalenthq/client-sdk";
-import { parseUnits, formatUnits } from "viem";
+// import { CovalentClient } from "@covalenthq/client-sdk";
+// import { parseUnits, formatUnits } from "viem";
 import circle_swap from "../../assets/images/images_swap/circle_swap.webp";
-import bitcoinLogo from "../../assets/images/images_swap/bitcoin-logo.svg";
+// import bitcoinLogo from "../../assets/images/images_swap/bitcoin-logo.svg";
 import greenbitcoinlogo from "../../assets/images/images_swap/logo2.svg";
-import dashboardicon from "../../assets/images/images_swap/dashboard_icon.svg";
-import ellipse_one from "../../assets/images/images_swap/ellipse_one.svg";
-import ellipse_two from "../../assets/images/images_swap/ellipse_two.svg";
-import ellipse_three from "../../assets/images/images_swap/ellipse_three.svg";
-import ellipse_fore from "../../assets/images/images_swap/ellipse_fore.svg";
-import token_icon from "../../assets/images/images_swap/token_icon.svg";
+// import dashboardicon from "../../assets/images/images_swap/dashboard_icon.svg";
+// import ellipse_one from "../../assets/images/images_swap/ellipse_one.svg";
+// import ellipse_two from "../../assets/images/images_swap/ellipse_two.svg";
+// import ellipse_three from "../../assets/images/images_swap/ellipse_three.svg";
+// import ellipse_fore from "../../assets/images/images_swap/ellipse_fore.svg";
+// import token_icon from "../../assets/images/images_swap/token_icon.svg";
 import down_chevron from "../../assets/images/images_swap/down_chevron.svg";
-import vector from "../../assets/images/images_swap/vector.svg";
-import parameters_vector from "../../assets/images/images_swap/parameters_vector.svg";
+// import vector from "../../assets/images/images_swap/vector.svg";
+// import parameters_vector from "../../assets/images/images_swap/parameters_vector.svg";
 import safeImg from "../../assets/images/images_swap/parameters_one.webp";
 import altImg from "../../assets/images/images_swap/parameters_five.png";
 import airImg from "../../assets/images/images_swap/parameters_two.webp";
@@ -25,32 +25,34 @@ import left_green_circle from "../../assets/images/images_swap/left_green_circle
 import right_oreng_circle from "../../assets/images/images_swap/right_oreng_circle.png";
 import vector_smart_object from "../../assets/images/images_swap/vector_smart_object.svg";
 import React from "react";
-import ellipse_one_mobile from "../../assets/images/images_swap/ellipse_one_mobille.png";
-import ellipse_two_mobile from "../../assets/images/images_swap/ellipse_two_mobile.png";
+// import ellipse_one_mobile from "../../assets/images/images_swap/ellipse_one_mobille.png";
+// import ellipse_two_mobile from "../../assets/images/images_swap/ellipse_two_mobile.png";
 import up from "../../assets/images/images_safe/up.svg";
-import { CustomConnectButton } from "../swap_components/CustomConnect";
-import { address } from "../swap_components/dashboard";
-import bigInt from "big-integer";
+// import { CustomConnectButton } from "../swap_components/CustomConnect";
+// import { address } from "../swap_components/dashboard";
+// import bigInt from "big-integer";
+import { useUserCrowd } from "../../hooks/useUserCrow.js";
+import { useComplexLPData } from "../../hooks/useComplexLPData.js";
 // import Moralis from 'moralis';
 // import { EvmChain } from '@moralisweb3/common-evm-utils';
 // import { useNFTsByOwner } from 'ankr-react';
 
+// import {
+// 	useSaleInfo,
+// 	useBalanceOf,
+// 	useDecimals,
+// 	useAllowance,
+// 	useRegularFeeRate,
+// 	useTotalSupply,
+// } from "../../hooks/useContactRead";
 import {
-	useSaleInfo,
-	useBalanceOf,
-	useDecimals,
-	useAllowance,
-	useRegularFeeRate,
-	useTotalSupply,
-} from "../../hooks/useContactRead";
-import {
-	contracts,
-	AAVEWBTCOwner,
-	CURRENT_DAO_INDEX,
+	// contracts,
+	// AAVEWBTCOwner,
+	// CURRENT_DAO_INDEX,
 	DAOs,
 } from "../../utils/blockchain.js";
-import { useApproveWrite, useBuyWrite } from "../../hooks/useContractWrite";
-import { toOptionalFixed } from "../../utils/converter";
+// import { useApproveWrite, useBuyWrite } from "../../hooks/useContractWrite";
+// import { toOptionalFixed } from "../../utils/converter";
 import btc from "../../assets/images/images_dashboard/btc.webp";
 import altportfolio from "../../assets/images/images_dashboard/altportfolio.webp";
 import air from "../../assets/images/images_dashboard/air.webp";
@@ -59,7 +61,7 @@ import ultra from "../../assets/images/images_dashboard/ultra.webp";
 // import bigInt from "big-integer";
 
 const Dashboard = () => {
-	const client = new CovalentClient("cqt_rQD8qf993P8D6rGM68tRFqYVbdbM");
+	// const client = new CovalentClient("cqt_rQD8qf993P8D6rGM68tRFqYVbdbM");
 
 	const { address } = useAccount();
 
@@ -69,8 +71,8 @@ const Dashboard = () => {
 	};
 	const [selectedStrategy, setSelectedStrategy] = useState("");
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-	const [complexLPDataUser, setComplexLPDataUser] = useState({});
-	const [complexCrowdData, setComplexCrowdData] = useState({});
+	// const [complexLPDataUser, setComplexLPDataUser] = useState({});
+	// const [complexCrowdData, setComplexCrowdData] = useState({});
 
 	const strategies = [
 		{ name: "BTC", logo: btc },
@@ -80,13 +82,9 @@ const Dashboard = () => {
 		{ name: "SAFE", logo: safe },
 	];
 
-	const [sumBtcDao, setSumBtcDao] = useState(0);
-	const [sumAltportfolioDao, setSumAltportfolioDao] = useState(0);
-	const [sumUltraDao, setSumUltraDao] = useState(0);
-	const [sumAirDropDao, setSumAirDropDao] = useState(0);
-	const [sumSafeDao, setSumSafeDao] = useState(0);
-	const [BTCDAOLPUser, setBTCDAOLPUser] = useState(0);
-	const [totalSupplyLps, setTotalSupplyLps] = useState({});
+
+	// const [BTCDAOLPUser, setBTCDAOLPUser] = useState(0);
+	// const [totalSupplyLps, setTotalSupplyLps] = useState({});
 	const [displayUserShare, setDisplayUserShare] = useState({});
 
 	const toggleDropdown = () => {
@@ -184,8 +182,16 @@ const Dashboard = () => {
 			functionName: "totalSupply",
 		})),
 	});
+	const { userCrowd: sumBtcDao } = useUserCrowd(DAOs.axBTC)
+	const { userCrowd: sumUltraDao } = useUserCrowd(DAOs.axUltra)
+	const { userCrowd: sumAltportfolioDao } = useUserCrowd(DAOs.axAltPortfolio)
+	const { userCrowd: sumAirDropDao } = useUserCrowd(DAOs.axAirdrop)
+	const { userCrowd: sumSafeDao } = useUserCrowd(DAOs.axSafe)
+	const { userLpBalances: complexLPDataUser } = useComplexLPData(address)
+	const { userLpBalances: complexCrowdData } = useComplexLPData("0x0cf784bba0FFA0a7006f3Ee7e4357E643a07F6e7")
 
 	useEffect(() => {
+		// console.debug(sumAirDropDao, sumAltportfolioDao, sumBtcDao, sumSafeDao, sumUltraDao, complexLPDataUser, complexCrowdData)
 		// console.log('asdasd')
 
 		// if (!isPending && data) {
@@ -226,55 +232,60 @@ const Dashboard = () => {
 		// 	console.log('Total Supply LPs:', totalSupplyLps);
 		//   }
 
-		client.BalanceService.getTokenBalancesForWalletAddress(
-			"arbitrum-mainnet",
-			DAOs.axBTC
-		).then((resp) => {
-			const items = resp.data.items;
-			const sum = items.map((i) => i.quote).reduce((x, y) => x + y, 0);
-			setSumBtcDao(sum.toFixed(2));
-		});
+		// client.BalanceService.getTokenBalancesForWalletAddress(
+		// 	"arbitrum-mainnet",
+		// 	DAOs.axBTC
+		// ).then((resp) => {
+		// 	const items = resp?.data?.items;
+		// 	if (!items) return;
+		// 	const sum = items.map((i) => i.quote).reduce((x, y) => x + y, 0);
+		// 	setSumBtcDao(sum.toFixed(2));
+		// });
 
-		client.BalanceService.getTokenBalancesForWalletAddress(
-			"arbitrum-mainnet",
-			DAOs.axAltPortfolio
-		).then((resp) => {
-			const items = resp.data.items;
-			const sum = items.map((i) => i.quote).reduce((x, y) => x + y, 0);
-			setSumAltportfolioDao(sum.toFixed(2));
-		});
+		// client.BalanceService.getTokenBalancesForWalletAddress(
+		// 	"eth-mainnet",
+		// 	DAOs.axAltPortfolio
+		// ).then((resp) => {
+		// 	const items = resp?.data?.items;
+		// 	if (!items) return;
+		// 	const sum = items.map((i) => i.quote).reduce((x, y) => x + y, 0);
+		// 	setSumAltportfolioDao(sum.toFixed(2));
+		// });
 
-		client.BalanceService.getTokenBalancesForWalletAddress(
-			"arbitrum-mainnet",
-			DAOs.axUltra
-		).then((resp) => {
-			const items = resp.data.items;
-			const sum = items.map((i) => i.quote).reduce((x, y) => x + y, 0);
-			setSumUltraDao(sum.toFixed(2));
-		});
-		client.BalanceService.getTokenBalancesForWalletAddress(
-			"arbitrum-mainnet",
-			DAOs.axAirdrop
-		).then((resp) => {
-			const items = resp.data.items;
-			const sum = items.map((i) => i.quote).reduce((x, y) => x + y, 0);
-			setSumAirDropDao(sum.toFixed(2));
-		});
-		client.BalanceService.getTokenBalancesForWalletAddress(
-			"arbitrum-mainnet",
-			DAOs.axSafe
-		).then((resp) => {
-			const items = resp.data.items;
-			const sum = items.map((i) => i.quote).reduce((x, y) => x + y, 0);
-			setSumSafeDao(sum.toFixed(2));
-		});
+		// client.BalanceService.getTokenBalancesForWalletAddress(
+		// 	"arbitrum-mainnet",
+		// 	DAOs.axUltra
+		// ).then((resp) => {
+		// 	const items = resp?.data?.items;
+		// 	if (!items) return;
+		// 	const sum = items.map((i) => i.quote).reduce((x, y) => x + y, 0);
+		// 	setSumUltraDao(sum.toFixed(2));
+		// });
+		// client.BalanceService.getTokenBalancesForWalletAddress(
+		// 	"arbitrum-mainnet",
+		// 	DAOs.axAirdrop
+		// ).then((resp) => {
+		// 	const items = resp?.data?.items;
+		// 	if (!items) return;
+		// 	const sum = items.map((i) => i.quote).reduce((x, y) => x + y, 0);
+		// 	setSumAirDropDao(sum.toFixed(2));
+		// });
+		// client.BalanceService.getTokenBalancesForWalletAddress(
+		// 	"arbitrum-mainnet",
+		// 	DAOs.axSafe
+		// ).then((resp) => {
+		// 	const items = resp?.data?.items;
+		// 	if (!items) return;
+		// 	const sum = items.map((i) => i.quote).reduce((x, y) => x + y, 0);
+		// 	setSumSafeDao(sum.toFixed(2));
+		// });
 
 		// lp tokens
 		// client.BalanceService.getTokenBalancesForWalletAddress(
 		// 	"arbitrum-mainnet",
 		// 	address
 		// ).then((resp) => {
-		// 	const items = resp.data.items;
+		// 	const items = resp?.data?.items;
 
 		// 	const jsonString = JSON.stringify(items, (key, value) => {
 		// 		if (typeof value === 'bigint') {
@@ -292,94 +303,94 @@ const Dashboard = () => {
 		// });
 
 		// ПОЛУЧЕНИЕ ЛП ЮЗЕРА
-		client.BalanceService.getTokenBalancesForWalletAddress(
-			"arbitrum-mainnet",
-			address
-		).then((resp) => {
-			const items = resp.data.items;
+		// client.BalanceService.getTokenBalancesForWalletAddress(
+		// 	"arbitrum-mainnet",
+		// 	address
+		// ).then((resp) => {
+		// 	const items = resp?.data?.items;
+		// 	if (!items) return;
+		// 	// Создаем объект для хранения данных токенов
+		// 	const tokenData = {};
 
-			// Создаем объект для хранения данных токенов
-			const tokenData = {};
+		// 	items.forEach((item) => {
+		// 		// console.log(item.contract_name)
+		// 		// console.log(typeof(item.balance) + " item balance")
 
-			items.forEach((item) => {
-				// console.log(item.contract_name)
-				// console.log(typeof(item.balance) + " item balance")
+		// 		// console.log(typeof(item.contract_decimals) + " item decimals")
+		// 		const balance = Number(item.balance); // BigInt
+		// 		const decimals = item.contract_decimals; // Преобразуем в BigInt
 
-				// console.log(typeof(item.contract_decimals) + " item decimals")
-				const balance = Number(item.balance); // BigInt
-				const decimals = item.contract_decimals; // Преобразуем в BigInt
+		// 		let formattedBalance = Number(balance / 10 ** decimals);
+		// 		tokenData[item.contract_ticker_symbol] = formattedBalance;
+		// 	});
 
-				let formattedBalance = Number(balance / 10 ** decimals);
-				tokenData[item.contract_ticker_symbol] = formattedBalance;
-			});
-
-			// Обновляем состояние complexLPData
-			setComplexLPDataUser(tokenData);
-		});
-		console.log("Complex LP Data:");
-		console.log(complexLPDataUser);
+		// 	// Обновляем состояние complexLPData
+		// 	setComplexLPDataUser(tokenData);
+		// });
+		// console.log("Complex LP Data:");
+		// console.log(complexLPDataUser);
 
 		//////////
 
 		// ПОЛУЧЕНИЕ ЛП CROWDMODULE
-		client.BalanceService.getTokenBalancesForWalletAddress(
-			"arbitrum-mainnet",
-			"0x0cf784bba0FFA0a7006f3Ee7e4357E643a07F6e7"
-		).then((resp) => {
-			const items = resp.data.items;
+		// client.BalanceService.getTokenBalancesForWalletAddress(
+		// 	"arbitrum-mainnet",
+		// 	"0x0cf784bba0FFA0a7006f3Ee7e4357E643a07F6e7"
+		// ).then((resp) => {
+		// 	const items = resp?.data?.items;
+		// 	if (!items) return;
+		// 	// Создаем объект для хранения данных токенов
+		// 	const crowdData = {};
 
-			// Создаем объект для хранения данных токенов
-			const crowdData = {};
+		// 	items.forEach((item) => {
+		// 		// console.log(item.contract_name)
+		// 		// console.log(typeof(item.balance) + " item balance")
 
-			items.forEach((item) => {
-				// console.log(item.contract_name)
-				// console.log(typeof(item.balance) + " item balance")
+		// 		// console.log(typeof(item.contract_decimals) + " item decimals")
+		// 		const balance = Number(item.balance); // BigInt
+		// 		const decimals = item.contract_decimals; // Преобразуем в BigInt
 
-				// console.log(typeof(item.contract_decimals) + " item decimals")
-				const balance = Number(item.balance); // BigInt
-				const decimals = item.contract_decimals; // Преобразуем в BigInt
+		// 		// let formattedBalance = Number(balance / 10**decimals);
+		// 		let formattedBalance = Number(balance / 10 ** decimals);
+		// 		crowdData[item.contract_ticker_symbol] = formattedBalance;
+		// 	});
 
-				// let formattedBalance = Number(balance / 10**decimals);
-				let formattedBalance = Number(balance / 10 ** decimals);
-				crowdData[item.contract_ticker_symbol] = formattedBalance;
-			});
+		// 	// Обновляем состояние complexCrowdData
+		// 	setComplexCrowdData(crowdData);
 
-			// Обновляем состояние complexCrowdData
-			setComplexCrowdData(crowdData);
+		// 	console.log("crowd data:", crowdData);
+		// });
 
-			console.log("crowd data:", crowdData);
-		});
+		// client.BalanceService.getTokenBalancesForWalletAddress(
+		// 	"arbitrum-mainnet",
+		// 	address
+		// ).then((resp) => {
+		// 	const items = resp?.data?.items;
+		// 	if (!items) return;
+		// 	// Создаем объект для хранения данных токенов
+		// 	const dataUser = {};
 
-		client.BalanceService.getTokenBalancesForWalletAddress(
-			"arbitrum-mainnet",
-			address
-		).then((resp) => {
-			const items = resp.data.items;
+		// 	items.forEach((item) => {
+		// 		// console.log(item.contract_name)
+		// 		// console.log(typeof(item.balance) + " item balance")
 
-			// Создаем объект для хранения данных токенов
-			const dataUser = {};
+		// 		// console.log(typeof(item.contract_decimals) + " item decimals")
+		// 		const balance = Number(item.balance); // BigInt
+		// 		const decimals = item.contract_decimals; // Преобразуем в BigInt
 
-			items.forEach((item) => {
-				// console.log(item.contract_name)
-				// console.log(typeof(item.balance) + " item balance")
+		// 		// let formattedBalance = Number(balance / 10**decimals);
+		// 		let formattedBalance = Number(balance / 10 ** decimals);
+		// 		dataUser[item.contract_ticker_symbol] = formattedBalance;
+		// 	});
 
-				// console.log(typeof(item.contract_decimals) + " item decimals")
-				const balance = Number(item.balance); // BigInt
-				const decimals = item.contract_decimals; // Преобразуем в BigInt
-
-				// let formattedBalance = Number(balance / 10**decimals);
-				let formattedBalance = Number(balance / 10 ** decimals);
-				dataUser[item.contract_ticker_symbol] = formattedBalance;
-			});
-
-			// Обновляем состояние complexCrowdData
-			setComplexCrowdData(dataUser);
-		});
+		// 	// Обновляем состояние complexCrowdData
+		// 	setComplexCrowdData(dataUser);
+		// });
 
 		///////
 
 		function getLPBalanceUserByName(tokenName) {
-			if (complexLPDataUser.hasOwnProperty(tokenName)) {
+			if (complexLPDataUser?.hasOwnProperty(tokenName)) {
 				return complexLPDataUser[tokenName];
 			} else {
 				return null;
@@ -387,7 +398,7 @@ const Dashboard = () => {
 		}
 
 		function getCrowdLPBalanceByName(tokenName) {
-			if (complexCrowdData.hasOwnProperty(tokenName)) {
+			if (complexCrowdData?.hasOwnProperty(tokenName)) {
 				return complexCrowdData[tokenName];
 			} else {
 				return null;
@@ -395,7 +406,7 @@ const Dashboard = () => {
 		}
 
 		function getLPTotalSupplyFixByName(tokenName) {
-			if (LPTotalSupplyFix.hasOwnProperty(tokenName)) {
+			if (LPTotalSupplyFix?.hasOwnProperty(tokenName)) {
 				return LPTotalSupplyFix[tokenName];
 			} else {
 				return null;
@@ -462,7 +473,7 @@ const Dashboard = () => {
 			//
 		} else {
 		}
-	}, []);
+	}, [complexCrowdData, complexLPDataUser, sumAirDropDao, sumAltportfolioDao, sumBtcDao, sumSafeDao, sumUltraDao]);
 
 	return (
 		<>
@@ -569,25 +580,25 @@ const Dashboard = () => {
 						<div className="parameters-conteiner-content-mobie">
 							<div className="content_item">
 								<img src={btcImg} alt="" />
-								<h3>BTC DAO: {displayUserShare["axBTC"]}$</h3>
+								<h3>BTC DAO: {displayUserShare["axBTC"] ?? "-"}$</h3>
 							</div>
 							<div className="content_item">
 								<img src={""} alt="" />
-								<h3>ALTPORTFOLIO DAO: {displayUserShare["AXALT"]}$</h3>
+								<h3>ALTPORTFOLIO DAO: {displayUserShare["AXALT"] ?? "-"}$</h3>
 							</div>
 						</div>
 						<div className="parameters-conteiner-content-mobie">
 							<div className="content_item">
 								<img src={ultraImg} alt="" />
-								<h3>ULTRA DAO: {displayUserShare["axULT"]}$</h3>
+								<h3>ULTRA DAO: {displayUserShare["axULT"] ?? "-"}$</h3>
 							</div>
 							<div className="content_item">
 								<img src={airImg} alt="" />
-								<h3>AIR DROP DAO: {displayUserShare["axAD"]}$</h3>
+								<h3>AIR DROP DAO: {displayUserShare["axAD"] ?? "-"}$</h3>
 							</div>
 							<div className="content_item">
 								<img src={safeImg} alt="" />
-								<h3>SAFE DAO: {displayUserShare["axSAFE"]}$</h3>
+								<h3>SAFE DAO: {displayUserShare["axSAFE"] ?? "-"}$</h3>
 							</div>
 						</div>
 					</div>

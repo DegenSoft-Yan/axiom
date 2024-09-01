@@ -23,7 +23,7 @@ export const AltDao = () => {
 
 	useEffect(() => {
 		client.BalanceService.getTokenBalancesForWalletAddress(
-			"arbitrum-mainnet",
+			"eth-mainnet",
 			DAOs.axAltPortfolio
 		).then((resp) => {
 			const items = resp.data.items.filter(

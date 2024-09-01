@@ -11,14 +11,11 @@ function App() {
 	return (
 		<>
 			<div className="main_swap">
-				<Providers>
-					<Header />
-					<Dashboard />
-					{/* <TransactionHistory /> */}
-					<Footer />
-				</Providers>
+				<Header />
+				<Dashboard />
+				{/* <TransactionHistory /> */}
+				<Footer />
 			</div>
-			<ToastContainer />
 		</>
 	);
 }

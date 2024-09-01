@@ -24,7 +24,7 @@ export const CustomConnectButton = () => {
                     className="content-button text button_swap"
                     type="button"
                   >
-                    Введите количество
+                    Подключить кошелек
                   </button>
                 );
               }

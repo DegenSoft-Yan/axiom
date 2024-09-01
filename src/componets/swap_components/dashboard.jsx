@@ -24,7 +24,6 @@ import ellipse_one_mobile from "../../assets/images/images_swap/ellipse_one_mobi
 import ellipse_two_mobile from "../../assets/images/images_swap/ellipse_two_mobile.png";
 import { useLocation } from "react-router-dom";
 import usdt from "../../assets/images/images_safe/usdt.svg";
-import bigInt from "big-integer";
 
 import { CustomConnectButton } from "./CustomConnect";
 import {
@@ -51,6 +50,7 @@ import { CovalentClient } from "@covalenthq/client-sdk";
 import { getTokenHoldersSum } from "../../api/api.js";
 import { useChainId } from "wagmi";
 import { useSwitchChain } from "wagmi";
+import ConfirmModal from "../UI/confirmModal.jsx";
 
 function roundUpToThousands(number) {
 	return Math.ceil(Number(number) * 1000) / 1000;
@@ -65,18 +65,20 @@ const GodObject = {
 		name: "ultraDao",
 		token1Name: "USDT",
 		token2Name: "axULT",
+		chainId: 1,
 		token1Logo: usdt,
 		token2Logo: ultraDaoLogo,
 		logoBottom: ultraDaoLogo,
-		addressDao: "0xe8740f7786ae2c674e484a71741247ee22fb125a",
-		addressLp: "0x0a240713C9dB821C51f36F4621d6ac1F6e4D3745",
-		addressUSDT: "0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
+		addressDao: "0x92cb7baef8eddb1d6a02fa236b356124ad0530a5", // "0xe8740f7786ae2c674e484a71741247ee22fb125a",
+		addressLp: "0xcB87b5D12CE6239F90992196CedbFCbF8e78ea13", // "0x0a240713C9dB821C51f36F4621d6ac1F6e4D3745",
+		addressUSDT: "0xdac17f958d2ee523a2206206994597c13d831ec7",
 	},
 	"/strategies/safedao/swap": {
 		name: "safeDao",
 		token1Name: "USDT",
 		token2Name: "axSAFE",
 		token1Logo: usdt,
+		chainId: 42161,
 		token2Logo: safeDaoLogo,
 		logoBottom: safeDaoLogo,
 		addressDao: "0xdb95465de86c947f7de927eb604bad526696881b",
@@ -90,6 +92,7 @@ const GodObject = {
 		token1Logo: usdt,
 		token2Logo: airDaoLogo,
 		logoBottom: airDaoLogo,
+		chainId: 42161,
 		addressDao: "0xf958e82b5a8e615cb3476b59f9589c45df67acca",
 		addressLp: "0x24536722187680Eb71C270c7cC45A44C34162381",
 		addressUSDT: "0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
@@ -101,6 +104,7 @@ const GodObject = {
 		token1Logo: bitcoinLogo,
 		token2Logo: greenbitcoinlogo,
 		logoBottom: BTCDaoLogo,
+		chainId: 42161,
 		addressDao: "0xf878d10a8b95bdee2747bd1faf7a3f3e2b7f19be",
 		addressLp: "0xd1903ee89EF554dDC92cD2C3143F752BC85FDB3c",
 		addressUSDT: "0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
@@ -113,6 +117,7 @@ const GodObject = {
 		token1Logo: usdt,
 		token2Logo: altDaoLogo,
 		logoBottom: altDaoLogo,
+		chainId: 1,
 		addressDao: "0xeebe6f7fd87ed28748f5e4d3e339ba0f28e90782",
 		addressLp: "0x8C3fce8E9bB082eFe5fB8922A45D0619Cae02435",
 		addressUSDT: "0xdac17f958d2ee523a2206206994597c13d831ec7",
@@ -120,28 +125,31 @@ const GodObject = {
 };
 
 
-const crowdModuleETH = '0x711E14eBC41A8f1595433FA4409a50BC9838Fc03';
+const crowdModuleETH = '0x711e14ebc41a8f1595433fa4409a50bc9838fc03';
 const crowdModuleARB = '0x0cf784bba0FFA0a7006f3Ee7e4357E643a07F6e7';
 
-function isChainSupported(chain, pathname) {
-	if (chain === undefined) {
-		return chain;
-	}
-	if (chain.id === 42161 && pathname === "/strategies/altporfoliodao/swap") {
-		return "eth";
-	}
-	return chain;
-}
+// function isChainSupported(chain, pathname) {
+// 	if (chain === undefined) {
+// 		return chain;
+// 	}
+// 	if (chain.id === 42161 && (pathname === "/strategies/altporfoliodao/swap" || pathname === "/strategies/ultrdao/swap")) {
+// 		return "eth";
+// 	}
+// 	return chain;
+// }
 
 const Dashboard = () => {
 	let { pathname } = useLocation();
 
 	const { chains, switchChain } = useSwitchChain();
+	const { address, isConnected, chain } = useAccount();
+
 
 	let [sumDao, setSumDao] = useState(0);
 	const [sumUsersLpTokens, setSumUsersLpTokens] = useState(0);
-	const [isBtcDao, setIsBtcDao] = useState(false);
-	let [currentLPAddress, setCurrentLPAddress] = useState("");
+	const [isBtcDao, setIsBtcDao] = useState(pathname === "/strategies/btcdao/swap");
+	const [currentLPAddress, setCurrentLPAddress] = useState(GodObject[pathname].addressLp);
+	const xdaoAddress = GodObject[pathname].chainId === 1 ? crowdModuleETH : crowdModuleARB;
 
 	useEffect(() => {
 		if (GodObject[pathname]) {
@@ -207,7 +215,7 @@ const Dashboard = () => {
 	});
 	const balanceLP = useBalanceOf({
 		tokenAddress: "0xd1903ee89EF554dDC92cD2C3143F752BC85FDB3c",
-		owner: "0x711E14eBC41A8f1595433FA4409a50BC9838Fc03",
+		owner: xdaoAddress,
 	});
 
 	const [amount, setAmount] = useState(0);
@@ -216,15 +224,16 @@ const Dashboard = () => {
 	const [refetch, setRefetch] = useState(false);
 	const [isSwitched, setIsSwitched] = useState(false);
 	const [result, setResult] = useState(0);
-	const { XDAO, XDAOToken, AxiomToken, LPToken, WBTCToken, AAVEWBTCToken } =
+	const [isModalOpen, setIsModalOpen] = useState(false);
+	const { XDAOToken, WBTCToken, AAVEWBTCToken } =
 		contracts;
 
 	const requiredXDAOTokens = 5000000000000000000;
 
-	const { address, isConnected, chain } = useAccount();
 
 	const saleInfo = useSaleInfo({
-		tokenAddress: AxiomToken.address,
+		xdaoAddress: xdaoAddress,
+		tokenAddress: GodObject[pathname].addressDao,
 		index: CURRENT_DAO_INDEX,
 	});
 
@@ -233,7 +242,7 @@ const Dashboard = () => {
 		owner: "0x711E14eBC41A8f1595433FA4409a50BC9838Fc03", // crowd module
 	});
 
-	const feeRate = useRegularFeeRate();
+	const feeRate = useRegularFeeRate(xdaoAddress);
 
 	const WBTCBalance = useBalanceOf({
 		tokenAddress: WBTCToken.address,
@@ -256,7 +265,7 @@ const Dashboard = () => {
 	});
 
 	const lpTokenSupply = useTotalSupply({
-		tokenAddress: LPToken.address,
+		tokenAddress: currentLPAddress,
 	});
 
 	useEffect(() => {
@@ -276,7 +285,7 @@ const Dashboard = () => {
 	}, []);
 
 	const LPBalanceDAO = useBalanceOf({
-		tokenAddress: LPToken.address,
+		tokenAddress: currentLPAddress,
 		owner: AAVEWBTCOwner,
 	});
 
@@ -290,29 +299,27 @@ const Dashboard = () => {
 		owner: address,
 	});
 
-	const WBTCDecimals = useDecimals({ tokenAddress: WBTCToken.address }); // should be 8
-	const USDTDecimals = useDecimals({
-		tokenAddress: GodObject[pathname].addressUSDT,
-	}); //should be 6
+	const WBTCDecimals = 8 // useDecimals({ tokenAddress: WBTCToken.address }); // should be 8
+	const USDTDecimals = 6 // useDecimals({
+	// 	tokenAddress: GodObject[pathname].addressUSDT,
+	// }); //should be 6
 
 	const AAVEWBTCTokenDecimals = useDecimals({
 		tokenAddress: AAVEWBTCToken.address,
 	});
 
-	const LPDecimals = useDecimals({ tokenAddress: LPToken.address });
+	const LPDecimals = useDecimals({ tokenAddress: currentLPAddress });
 
 	const WBTCAllowance = useAllowance({
 		tokenAddress: WBTCToken.address,
 		owner: !refetch && address,
-		spender: XDAO.address,
+		spender: xdaoAddress,
 	});
 
 	const USDTAllowance = useAllowance({
 		tokenAddress: GodObject[pathname].addressUSDT,
 		owner: !refetch && address,
-		spender: (chain.id == 1)
-		? crowdModuleETH
-		: crowdModuleARB
+		spender: xdaoAddress,
 	});
 
 	const XDAOTokenConditions = useMemo(() => {
@@ -338,8 +345,9 @@ const Dashboard = () => {
 	}, [AAVEWBTCTokenBalance, AAVEWBTCTokenDecimals]);
 
 	const formattedLPBalanceUser = useMemo(() => {
+		console.debug("LPBalanceUser", LPBalanceUser, LPDecimals);
 		return LPBalanceUser !== undefined && LPDecimals
-			? formatUnits(LPBalanceUser, LPDecimals)
+			? formatUnits(LPBalanceUser ?? 0n, LPDecimals)
 			: undefined;
 	}, [LPBalanceUser, LPDecimals]);
 
@@ -359,25 +367,25 @@ const Dashboard = () => {
 		}
 	}, [amount, USDTDecimals]);
 
-	const totalBTCBalance = useMemo(() => {
-		return AAVEWBTCTokenBalance + wBTCDAOBalance;
-	}, [AAVEWBTCTokenBalance, wBTCDAOBalance]);
+	// const totalBTCBalance = useMemo(() => {
+	// 	return AAVEWBTCTokenBalance + wBTCDAOBalance;
+	// }, [AAVEWBTCTokenBalance, wBTCDAOBalance]);
 
-	const formattedSharePrice = useMemo(() => {
-		const LPBalance = lpTokenSupply - LPBalanceDAO;
-		const displayShare = totalBTCBalance / LPBalance;
+	// const formattedSharePrice = useMemo(() => {
+	// 	const LPBalance = lpTokenSupply - LPBalanceDAO;
+	// 	const displayShare = Number(totalBTCBalance) / LPBalance;
 
-		return displayShare !== undefined && AAVEWBTCTokenDecimals
-			? formatUnits(displayShare, AAVEWBTCTokenDecimals)
-			: undefined;
-	}, [totalBTCBalance]);
+	// 	return displayShare !== undefined && AAVEWBTCTokenDecimals
+	// 		? formatUnits(displayShare, AAVEWBTCTokenDecimals)
+	// 		: undefined;
+	// }, [totalBTCBalance]);
 
-	let approveToken;
-	if (isBtcDao) {
-		approveToken = GodObject[pathname].addressWBTC;
-	} else {
-		approveToken = GodObject[pathname].addressUSDT;
-	}
+	// let approveToken;
+	// // if (isBtcDao) {
+	// // 	approveToken = GodObject[pathname].addressWBTC;
+	// // } else {
+	// // 	approveToken = GodObject[pathname].addressUSDT;
+	// // }
 
 	const {
 		data: approveData,
@@ -388,9 +396,7 @@ const Dashboard = () => {
 		tokenAddress: isBtcDao
 			? GodObject[pathname].addressWBTC
 			: GodObject[pathname].addressUSDT,
-		spender: (chain.id == 1)
-		? crowdModuleETH
-		: crowdModuleARB,
+		spender: xdaoAddress,
 		amount: parsedAmount,
 	});
 
@@ -400,9 +406,7 @@ const Dashboard = () => {
 		txStatus: buyTxStatus,
 		write: buyWrite,
 	} = useBuyWrite({
-		crowdModule: (chain.id == 1)
-		? crowdModuleETH
-		: crowdModuleARB,
+		crowdModule: xdaoAddress,
 		tokenAddress: GodObject[pathname].addressDao,
 		amount: parsedAmount,
 	});
@@ -431,8 +435,12 @@ const Dashboard = () => {
 	};
 
 	const handleSwitchChain = () => {
-		switchChain({ chainId: 1 });
+		if (!GodObject[pathname].chainId) return
+		switchChain({ chainId: GodObject[pathname].chainId });
 	};
+	useEffect(() => {
+
+	}, [])
 
 	const handleMaxUSDT = () => {
 		if (!isBtcDao) {
@@ -455,7 +463,7 @@ const Dashboard = () => {
 						(((formattedUSDTBalance * 10 ** WBTCDecimals) /
 							Number(saleInfo?.rate)) *
 							(100 - fee)) /
-						100;
+						10000;
 					setReceive(toOptionalFixed(_receive, 8));
 				}
 			}
@@ -470,9 +478,9 @@ const Dashboard = () => {
 				const _amount = isSwitched
 					? formattedLPBalanceUser * result
 					: (((formattedLPBalanceUser * Number(saleInfo?.rate)) /
-							10 ** WBTCDecimals) *
-							100) /
-					  (100 - fee);
+						10 ** WBTCDecimals) *
+						100) /
+					(100 - fee);
 				setAmount(toOptionalFixed(_amount, 8));
 			} else {
 				setAmount(formattedWBTCBalance);
@@ -491,10 +499,12 @@ const Dashboard = () => {
 	};
 
 	const handleChangeAmount = (e) => {
-		const _amount = e.target.value;
+		const _amount = Number(e.target.value);
+		console.debug(_amount, feeRate, saleInfo);
 		if (!isBtcDao) {
-			if (_amount < 0) {
+			if (_amount <= 0) {
 				setAmount(0);
+				setReceive(0);
 				return;
 			}
 
@@ -507,42 +517,45 @@ const Dashboard = () => {
 				const fee = feeRate / 100;
 				const _receive = isSwitched
 					? (((_amount * Number(saleInfo?.rate)) / 10 ** WBTCDecimals) *
-							(100 + fee)) /
-					  100
+						(100 + fee)) /
+					10000
 					: (((_amount * 10 ** WBTCDecimals) / Number(saleInfo?.rate)) *
-							(100 - fee)) /
-					  100;
+						(100 - fee)) /
+					10000;
 				setReceive(toOptionalFixed(_receive, 8));
 			}
 		} else {
 			// ЕСЛИ БТК ДАО
 			if (_amount < 0) {
 				setAmount(0);
+				setReceive(0);
 				return;
 			}
 			setAmount(_amount);
 			if (_amount === "") {
 				setReceive(0);
+				setAmount(0);
 			}
 			if (saleInfo && feeRate && _amount) {
 				const fee = feeRate / 100;
 				const _receive = isSwitched
 					? (((_amount * Number(saleInfo?.rate)) / 10 ** WBTCDecimals) *
-							(100 + fee)) /
-					  100
+						(100 + fee)) /
+					10000
 					: (((_amount * 10 ** WBTCDecimals) / Number(saleInfo?.rate)) *
-							(100 - fee)) /
-					  100;
+						(100 - fee)) /
+					10000;
 				setReceive(toOptionalFixed(_receive, 8));
 			}
 		}
 	};
 
 	const handleChangeReceive = (e) => {
-		const _receive = e.target.value;
+		const _receive = Number(e.target.value);
 		if (!isBtcDao) {
 			if (_receive < 0) {
 				setReceive(0);
+				setAmount(0);
 				return;
 			}
 
@@ -550,14 +563,17 @@ const Dashboard = () => {
 
 			if (_receive === "") {
 				setAmount(0);
-			}
+				setReceive(0);
+				return;
 
+			}
+			console.debug(saleInfo, feeRate, _receive);
 			if (saleInfo && feeRate && _receive) {
 				const fee = feeRate / 100;
 				const _amount = isSwitched
 					? _receive * result
-					: (((_receive * Number(saleInfo?.rate)) / 10 ** WBTCDecimals) * 100) /
-					  (100 - fee);
+					: (((_receive * Number(saleInfo?.rate)) / 10 ** WBTCDecimals) * 10000) /
+					(100 - fee);
 				setAmount(toOptionalFixed(_amount, 8));
 			}
 		} else {
@@ -573,7 +589,7 @@ const Dashboard = () => {
 				const _amount = isSwitched
 					? _receive * result
 					: (((_receive * Number(saleInfo?.rate)) / 10 ** WBTCDecimals) * 100) /
-					  (100 - fee);
+					(100 - fee);
 				setAmount(toOptionalFixed(_amount, 8));
 			}
 		}
@@ -635,11 +651,13 @@ const Dashboard = () => {
 		buyTxStatus,
 	]);
 
-	useEffect(() => {
-		if (GodObject[pathname]) {
-			setCurrentLPAddress(GodObject[pathname].addressLp);
-		}
-	}, [currentLPAddress]);
+	// useEffect(() => {
+	// 	if (GodObject[pathname]) {
+	// 		setCurrentLPAddress(GodObject[pathname].addressLp);
+	// 	}
+	// }, [currentLPAddress]);
+
+	const isChainSupported = chain && chain.id === GodObject[pathname].chainId;
 
 	return (
 		<>
@@ -690,8 +708,7 @@ const Dashboard = () => {
 													</div>
 												</div>
 												{isConnected &&
-												isChainSupported(chain, pathname) &&
-												isChainSupported(chain, pathname) !== "eth" ? (
+													isChainSupported ? (
 													<h3>
 														На кошельке:{" "}
 														{formattedLPBalanceUser !== undefined ? (
@@ -748,8 +765,7 @@ const Dashboard = () => {
 													</div>
 												</div>
 												{isConnected &&
-												isChainSupported(chain, pathname) &&
-												isChainSupported(chain, pathname) !== "eth" ? (
+													isChainSupported ? (
 													<h3>
 														На кошельке:{" "}
 														{/* {formattedUSDTBalance !== undefined ? (
@@ -762,12 +778,12 @@ const Dashboard = () => {
 														)} */}
 														{!isBtcDao ? (
 															<>
-																{toOptionalFixed(formattedUSDTBalance, 6)}
+																{toOptionalFixed(formattedUSDTBalance, 2)}
 																<span> {GodObject[pathname].token1Name}</span>
 															</>
 														) : (
 															<>
-																{toOptionalFixed(formattedWBTCBalance, 8)}
+																{toOptionalFixed(formattedWBTCBalance, 6)}
 
 																<span> {GodObject[pathname].token1Name}</span>
 															</>
@@ -809,13 +825,12 @@ const Dashboard = () => {
 												</div>
 
 												{isConnected &&
-												isChainSupported(chain, pathname) &&
-												isChainSupported(chain, pathname) !== "eth" ? (
+													isChainSupported ? (
 													<h3>
 														На кошельке:{" "}
 														{!isBtcDao ? (
 															<>
-																{toOptionalFixed(formattedUSDTBalance, 8)}
+																{toOptionalFixed(formattedUSDTBalance, 2)}
 																<span> {GodObject[pathname].token1Name} </span>
 																<button
 																	onClick={handleMaxUSDT}
@@ -826,7 +841,7 @@ const Dashboard = () => {
 															</>
 														) : (
 															<>
-																{toOptionalFixed(formattedWBTCBalance, 8)}
+																{toOptionalFixed(formattedWBTCBalance, 6)}
 																<span> {GodObject[pathname].token1Name} </span>
 																<button
 																	onClick={handleMaxUSDT}
@@ -876,8 +891,7 @@ const Dashboard = () => {
 												</div>
 
 												{isConnected &&
-												isChainSupported(chain, pathname) &&
-												isChainSupported(chain, pathname) !== "eth" ? (
+													isChainSupported ? (
 													<h3>
 														На кошельке:{" "}
 														{formattedLPBalanceUser !== undefined ? (
@@ -902,17 +916,15 @@ const Dashboard = () => {
 								</div>
 								<div className="conteiner-content-button">
 									{isConnected &&
-									isChainSupported(chain, pathname) &&
-									isChainSupported(chain, pathname) !== "eth" ? (
+										isChainSupported ? (
 										!XDAOTokenConditions ? (
 											<button className="content-button inactive button_swap">
 												Требуется 5 XDAO
 											</button>
 										) : isSwitched ? (
 											<button
-												className={`content-button button_swap ${
-													!parsedAmount ? "inactive" : ""
-												} `}
+												className={`content-button button_swap ${!parsedAmount ? "inactive" : ""
+													} `}
 												disabled={!parsedAmount || isTxLoading}
 												onClick={handleSell}
 											>
@@ -932,22 +944,21 @@ const Dashboard = () => {
 											</button>
 										) : (
 											<button
-												className={`content-button button_swap ${
-													!parsedAmount ? "inactive" : ""
-												} `}
+												className={`content-button button_swap ${!parsedAmount ? "inactive" : ""
+													} `}
 												disabled={!parsedAmount || isTxLoading}
-												onClick={() => buyWrite()}
+												onClick={() => setIsModalOpen(true)}
 											>
 												{buyText}
 											</button>
 										)
-									) : isChainSupported(chain, pathname) === "eth" ? (
+									) : !isChainSupported && isConnected ? (
 										<button
 											onClick={handleSwitchChain}
 											className="content-button wrong-network text button_swap"
 											type="button"
 										>
-											Переключить на eth
+											{`Переключить на ${GodObject[pathname].chainId === 1 ? "Ethereum" : "Arbitrum"}`}
 										</button>
 									) : (
 										<CustomConnectButton />
@@ -987,6 +998,7 @@ const Dashboard = () => {
 						alt=""
 					/>
 				</div>
+				<ConfirmModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onConfirm={() => buyWrite()} />
 			</section>
 		</>
 	);
@@ -1071,17 +1083,17 @@ export default Dashboard;
 // }, [finalValue]);
 
 /* <div className="content_item">
-                <img src={parameters_two} alt="" />
-                <h3>EXC: 29.01%</h3>
-              </div>
-              <div className="content_item">
-                <img src={parameters_three} alt="" />
-                <h3>MTV: 29.01%</h3>
-              </div>
-              <div className="content_item">
-                <img src={parameters_fore} alt="" />
-                <h3>CLS: 29.01%</h3>
-              </div> */
+				<img src={parameters_two} alt="" />
+				<h3>EXC: 29.01%</h3>
+			  </div>
+			  <div className="content_item">
+				<img src={parameters_three} alt="" />
+				<h3>MTV: 29.01%</h3>
+			  </div>
+			  <div className="content_item">
+				<img src={parameters_fore} alt="" />
+				<h3>CLS: 29.01%</h3>
+			  </div> */
 
 // const handleMax = () => {
 

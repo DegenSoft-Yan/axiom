@@ -97,7 +97,7 @@ const Dashboard = () => {
 		owner: address,
 	});
 
-	const WBTCDecimals = useDecimals({ tokenAddress: WBTCToken.address });
+	const WBTCDecimals = 8 //useDecimals({ tokenAddress: WBTCToken.address });
 
 	const AAVEWBTCTokenDecimals = useDecimals({
 		tokenAddress: AAVEWBTCToken.address,
@@ -152,18 +152,18 @@ const Dashboard = () => {
 		}
 	}, [amount, WBTCDecimals]);
 
-	const totalBTCBalance = useMemo(() => {
-		return AAVEWBTCTokenBalance + wBTCDAOBalance;
-	}, [AAVEWBTCTokenBalance, wBTCDAOBalance]);
+	// const totalBTCBalance = useMemo(() => {
+	// 	return AAVEWBTCTokenBalance + wBTCDAOBalance;
+	// }, [AAVEWBTCTokenBalance, wBTCDAOBalance]);
 
-	const formattedSharePrice = useMemo(() => {
-		const LPBalance = lpTokenSupply - LPBalanceDAO;
-		const displayShare = totalBTCBalance / LPBalance;
+	// const formattedSharePrice = useMemo(() => {
+	// 	const LPBalance = lpTokenSupply - LPBalanceDAO;
+	// 	const displayShare = totalBTCBalance / LPBalance;
 
-		return displayShare !== undefined && AAVEWBTCTokenDecimals
-			? formatUnits(displayShare, AAVEWBTCTokenDecimals)
-			: undefined;
-	}, [totalBTCBalance]);
+	// 	return displayShare !== undefined && AAVEWBTCTokenDecimals
+	// 		? formatUnits(displayShare, AAVEWBTCTokenDecimals)
+	// 		: undefined;
+	// }, [totalBTCBalance]);
 
 	const {
 		data: approveData,
@@ -257,17 +257,19 @@ const Dashboard = () => {
 			const fee = feeRate / 100;
 			const _receive = isSwitched
 				? (((_amount * Number(saleInfo?.rate)) / 10 ** WBTCDecimals) *
-						(100 + fee)) /
-				  100
+					(100 + fee)) /
+				100
 				: (((_amount * 10 ** WBTCDecimals) / Number(saleInfo?.rate)) *
-						(100 - fee)) /
-				  100;
+					(100 - fee)) /
+				100;
 			setReceive(toOptionalFixed(_receive, 8));
 		}
 	};
 
 	const handleChangeReceive = (e) => {
-		const _receive = e.target.value;
+		const _receive = Number(e.target.value);
+
+		console.debug("handleChangeReceive", _receive, saleInfo, feeRate, amount);
 
 		if (_receive < 0) {
 			setReceive(0);
@@ -284,9 +286,9 @@ const Dashboard = () => {
 			const fee = feeRate / 100;
 			const _amount = isSwitched
 				? (((_receive * 10 ** WBTCDecimals) / Number(saleInfo?.rate)) * 100) /
-				  (100 + fee)
+				(100 + fee)
 				: (((_receive * Number(saleInfo?.rate)) / 10 ** WBTCDecimals) * 100) /
-				  (100 - fee);
+				(100 - fee);
 			setAmount(toOptionalFixed(_amount, 8));
 		}
 	};
@@ -354,7 +356,7 @@ const Dashboard = () => {
 					<img className="up" src={up} alt="" />
 					<div className="dashboard-conteiner">
 						<div className="dashboard-conteiner-title">
-							<h1 style={{ fontWeight: "800" }}>Мой дашборд</h1>
+							<h1 style={{ fontWeight: "800" }}>Мой дашбор</h1>
 							<div className="dashboard-conteiner-title-line"></div>
 						</div>
 						<div className="dashboard-conteiner-content">
@@ -555,7 +557,7 @@ const Dashboard = () => {
 													</div>
 												</div>
 
-												{isConnected && chain ? (
+												{isConnected && chain && address ? (
 													<h3>
 														На кошельке:{" "}
 														{formattedLPBalance !== undefined ? (
@@ -575,7 +577,7 @@ const Dashboard = () => {
 									</div>
 								</div>
 								<div className="conteiner-content-button">
-									{isConnected && chain ? (
+									{isConnected && chain && address ? (
 										!XDAOTokenConditions ? (
 											<button className="content-button inactive button_swap">
 												Требуется 5 XDAO
@@ -598,9 +600,8 @@ const Dashboard = () => {
 											</button>
 										) : (
 											<button
-												className={`content-button button_swap ${
-													!parsedAmount ? "inactive" : ""
-												} `}
+												className={`content-button button_swap ${!parsedAmount ? "inactive" : ""
+													} `}
 												disabled={!parsedAmount || isTxLoading}
 												onClick={() => buyWrite()}
 											>
